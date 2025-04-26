@@ -33,6 +33,13 @@ class ApiController extends ResourceController
             ], 400);
         }
 
+        // Validasi apakah kode QR adalah hexadecimal 16 karakter
+        if (!preg_match('/^[a-fA-F0-9]{16}$/', $kodeQR)) {
+            return $this->failValidationErrors([
+                'kode_qr' => 'Kode QR tidak valid'
+            ], 400);
+        }
+
         try {
             $des = new Des();
             $key = "RUMAHBTK";
