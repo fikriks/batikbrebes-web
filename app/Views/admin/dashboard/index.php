@@ -65,20 +65,24 @@ Dashboard
 <div class="card">
     <div class="card-body">
         <h5 class="card-title fw-semibold mb-4">3 Produk Terbaru</h5>
-        <div class="row">
-            <?php $recentProducts = array_slice($produk, -3); ?>
-            <?php foreach ($recentProducts as $item): ?>
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="<?= base_url($item['foto_produk_path']) ?>" class="card-img-top" alt="<?= esc($item['motif']) ?>">
-                        <div class="card-body">
-                            <h5 class="card-title"><?= esc($item['kode_asli']) ?> - <?= esc($item['motif']) ?></h5>
-                            <p class="card-text"><?= esc($item['deskripsi']) ?></p>
+        <?php if (count($produk) > 0): ?>
+            <div class="row">
+                <?php $recentProducts = array_slice($produk, -3); ?>
+                <?php foreach ($recentProducts as $item): ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img src="<?= base_url($item['foto_produk_path']) ?>" class="card-img-top" alt="<?= esc($item['motif']) ?>">
+                            <div class="card-body">
+                                <h5 class="card-title"><?= esc($item['kode_asli']) ?> - <?= esc($item['motif']) ?></h5>
+                                <p class="card-text"><?= esc($item['deskripsi']) ?></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p class="mb-0">Tidak ada produk yang terdaftar.</p>
+        <?php endif; ?>
     </div>
 </div>
 <?= $this->endSection() ?>
