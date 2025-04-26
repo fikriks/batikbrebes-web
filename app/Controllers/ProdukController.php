@@ -58,7 +58,7 @@ class ProdukController extends BaseController
         $foto = $this->request->getFile('foto_produk');
         $fotoPath = 'uploads/foto-produk/';
         $fotoName = $foto->getRandomName();
-        $foto->move(FCPATH . $fotoPath, $fotoName);
+        $foto->move(ROOTPATH . 'public/' . $fotoPath, $fotoName);
     
         // Generate QR Code
         $qrPath = $this->generateQRCode($kodeEnkripsi);
@@ -132,7 +132,7 @@ class ProdukController extends BaseController
             }
             $fotoPath = 'uploads/foto-produk/';
             $fotoName = $foto->getRandomName();
-            $foto->move(FCPATH . $fotoPath, $fotoName);
+            $foto->move(ROOTPATH . 'public/' . $fotoPath, $fotoName);
             $data['foto_produk_path'] = $fotoPath . $fotoName;
         }
     
