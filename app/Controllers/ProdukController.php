@@ -56,7 +56,7 @@ class ProdukController extends BaseController
     
         // Handle upload foto
         $foto = $this->request->getFile('foto_produk');
-        $fotoPath = 'uploads/foto-produk/';
+        $fotoPath = 'uploads/foto-produk';
         $fotoName = $foto->getRandomName();
         $foto->move(ROOTPATH . 'public/' . $fotoPath, $fotoName);
     
@@ -130,7 +130,7 @@ class ProdukController extends BaseController
                     unlink($oldFotoPath);
                 }
             }
-            $fotoPath = 'uploads/foto-produk/';
+            $fotoPath = 'uploads/foto-produk';
             $fotoName = $foto->getRandomName();
             $foto->move(ROOTPATH . 'public/' . $fotoPath, $fotoName);
             $data['foto_produk_path'] = $fotoPath . $fotoName;
