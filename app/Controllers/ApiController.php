@@ -64,7 +64,8 @@ class ApiController extends ResourceController
                     'harga' => $produk['harga'],
                     'tanggal_produksi' => $produk['tanggal_produksi'],
                     'nama_pembuat' => $produk['nama_pembuat'],
-                    'qr_code_url' => base_url($produk['qr_code_path'])
+                    'qr_code_url' => base_url($produk['qr_code_path']),
+                    'foto_produk_path' => base_url($produk['foto_produk_path'])
                 ],
                 'timestamp' => date('Y-m-d H:i:s')
             ];
