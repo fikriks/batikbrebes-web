@@ -2,7 +2,7 @@
 
 <?= $this->section('title') ?>
 Dashboard
-<?= $this->endSection()?>
+<?= $this->endSection() ?>
 
 <?= $this->section('css') ?>
 <style>
@@ -15,6 +15,7 @@ Dashboard
         align-items: center;
         justify-content: space-between;
     }
+
     .card-statistics .icon {
         background-color: #4a90e2;
         border-radius: 8%;
@@ -22,21 +23,37 @@ Dashboard
         color: white;
         font-size: 28px;
     }
+
     .card-statistics .details {
         flex-grow: 1;
         margin-left: 20px;
     }
+
     .card-statistics .details .title {
         font-size: 18px;
         font-weight: bold;
         color: #333;
     }
+
     .card-statistics .details .value {
         font-size: 28px;
         color: #333;
     }
+
+    /* Tambahan untuk gambar produk */
+    .card-img-top {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .card-img-top:hover {
+        transform: scale(1.08);
+        z-index: 2;
+    }
 </style>
-<?= $this->endSection()?>
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <div class="row mb-3">
@@ -50,14 +67,14 @@ Dashboard
     </div>
     <div class="col-md-6">
         <div class="card-statistics">
-        <div class="icon">
-            <i class="ti ti-package"></i>
+            <div class="icon">
+                <i class="ti ti-package"></i>
+            </div>
+            <div class="details">
+                <div class="title">Total Produk</div>
+                <div class="value"><?= count($produk) ?></div>
+            </div>
         </div>
-        <div class="details">
-            <div class="title">Total Produk</div>
-            <div class="value"><?= count($produk) ?></div>
-        </div>
-    </div>
     </div>
 </div>
 
@@ -74,7 +91,9 @@ Dashboard
                             <img src="<?= base_url($item['foto_produk_path']) ?>" class="card-img-top" alt="<?= esc($item['motif']) ?>">
                             <div class="card-body">
                                 <h5 class="card-title"><?= esc($item['kode_asli']) ?> - <?= esc($item['motif']) ?></h5>
-                                <p class="card-text"><?= esc($item['deskripsi']) ?></p>
+                                <p class="card-text">
+                                    <?= strlen($item['deskripsi']) > 100 ? esc(substr($item['deskripsi'], 0, 100)) . '...' : esc($item['deskripsi']) ?>
+                                </p>
                             </div>
                         </div>
                     </div>
