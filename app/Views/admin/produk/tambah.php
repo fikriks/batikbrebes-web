@@ -2,7 +2,7 @@
 
 <?= $this->section('title') ?>
 Tambah Data Produk
-<?= $this->endSection()?>
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <div class="container-fluid">
@@ -28,7 +28,7 @@ Tambah Data Produk
         <div class="card-body">
             <form action="<?= base_url('admin/produk/simpan') ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field() ?>
-                
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Kode Produk <span class="text-danger">*</span></label>
@@ -39,16 +39,16 @@ Tambah Data Produk
                         <input type="text" name="motif" class="form-control" value="<?= old('motif') ?>" required placeholder="Masukkan motif batik">
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label class="form-label">Deskripsi <span class="text-danger">*</span></label>
                     <textarea name="deskripsi" class="form-control" rows="3" placeholder="Masukkan deskripsi"><?= old('deskripsi') ?></textarea>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Harga (Rp) <span class="text-danger">*</span></label>
-                        <input type="number" name="harga" class="form-control" value="<?= old('harga') ?>" placeholder="Masukkan harga">
+                        <input type="number" name="harga" class="form-control harga-rupiah" value="<?= old('harga') ?>" placeholder="Masukkan harga">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Tanggal Produksi <span class="text-danger">*</span></label>
@@ -62,9 +62,9 @@ Tambah Data Produk
 
                 <div class="mb-3">
                     <label class="form-label">Foto Produk <span class="text-danger">*</span></label>
-                    <input type="file" name="foto_produk" class="form-control" required>
+                    <input type="file" name="foto_produk" class="form-control" accept="image/*" required>
                 </div>
-                
+
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="submit" class="btn btn-primary">
                         Simpan Data
@@ -74,4 +74,34 @@ Tambah Data Produk
         </div>
     </div>
 </div>
-<?= $this->endSection()?>
+<?= $this->endSection() ?>
+
+<?= $this->section('js') ?>
+<script>
+    $(document).ready(function() {
+        // Fungsi untuk memformat Rupiah
+        function formatRupiah(nilai) {
+            nilai = nilai.toString().replace(/\D/g, '');
+            return new Intl.NumberFormat('id-ID').format(nilai);
+        }
+
+        // Format nilai awal (old value) saat halaman dimuat
+        let oldValue = $('.harga-rupiah').val();
+        if (oldValue) {
+            $('.harga-rupiah').val(formatRupiah(oldValue));
+        }
+
+        // Format Rupiah saat ketik
+        $('.harga-rupiah').on('keyup', function() {
+            let nilai = $(this).val();
+            $(this).val(formatRupiah(nilai));
+        });
+
+        // Konversi ke angka sebelum submit form
+        $('form').on('submit', function() {
+            let harga = $('.harga-rupiah').val().replace(/\./g, '');
+            $('.harga-rupiah').val(harga);
+        });
+    });
+</script>
+<?= $this->endSection() ?>

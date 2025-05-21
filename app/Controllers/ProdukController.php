@@ -41,28 +41,49 @@ class ProdukController extends BaseController
             'nama_pembuat' => 'required',
             'foto_produk' => 'uploaded[foto_produk]|max_size[foto_produk,2048]|is_image[foto_produk]'
         ];
-    
-        if (!$this->validate($rules)) {
+
+        $messages = [ // Pesan error dalam Bahasa Indonesia
+            'kode_asli' => [
+                'required' => 'Kode asli produk wajib diisi.',
+                'is_unique' => 'Kode produk sudah digunakan, gunakan kode lain.'
+            ],
+            'motif' => [
+                'required' => 'Motif produk harus diisi.'
+            ],
+            'tanggal_produksi' => [
+                'required' => 'Tanggal produksi wajib diisi.'
+            ],
+            'nama_pembuat' => [
+                'required' => 'Nama pembuat tidak boleh kosong.'
+            ],
+            'foto_produk' => [
+                'uploaded' => 'Foto produk harus diunggah.',
+                'max_size' => 'Ukuran foto maksimal 2MB.',
+                'is_image' => 'File harus berupa gambar (JPG, PNG, dll).'
+            ]
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             // Jika validasi gagal
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-    
+
         $des = new Des();
         $plaintext = $this->request->getPost('kode_asli');
         $key = "RUMAHBTK";
         $hex = bin2hex($plaintext);
         $hexKey = bin2hex($key);
         $kodeEnkripsi = $des->encrypt($hex, $hexKey);
-    
+
         // Handle upload foto
         $foto = $this->request->getFile('foto_produk');
         $fotoPath = 'uploads/foto-produk/';
         $fotoName = $foto->getRandomName();
         $foto->move(ROOTPATH . 'public/' . $fotoPath, $fotoName);
-    
+
         // Generate QR Code
         $qrPath = $this->generateQRCode($kodeEnkripsi);
-    
+
         // Data yang akan disimpan
         $data = [
             'kode_produk' => $kodeEnkripsi,
@@ -75,10 +96,10 @@ class ProdukController extends BaseController
             'qr_code_path' => $qrPath,
             'foto_produk_path' => $fotoPath . $fotoName
         ];
-    
+
         // Simpan ke database
         $this->models->save($data);
-    
+
         // Redirect dengan pesan sukses
         return redirect()->to('admin/produk')->with('success', 'Data berhasil ditambahkan');
     }
@@ -86,7 +107,7 @@ class ProdukController extends BaseController
     public function edit($id)
     {
         $produk = $this->models->find($id);
-        
+
         if (!$produk) {
             return redirect()->to('admin/produk')->with('error', 'Produk tidak ditemukan');
         }
@@ -95,7 +116,7 @@ class ProdukController extends BaseController
             'title' => 'Edit Produk',
             'produk' => $produk
         ];
-        
+
         return view('admin/produk/edit', $data);
     }
 
@@ -107,11 +128,27 @@ class ProdukController extends BaseController
             'nama_pembuat' => 'required',
             'foto_produk' => 'if_exist|max_size[foto_produk,2048]|is_image[foto_produk]'
         ];
-    
-        if (!$this->validate($rules)) {
+
+        $messages = [ // Pesan error dalam Bahasa Indonesia
+            'motif' => [
+                'required' => 'Motif produk harus diisi.'
+            ],
+            'tanggal_produksi' => [
+                'required' => 'Tanggal produksi wajib diisi.'
+            ],
+            'nama_pembuat' => [
+                'required' => 'Nama pembuat tidak boleh kosong.'
+            ],
+            'foto_produk' => [
+                'max_size' => 'Ukuran foto maksimal 2MB.',
+                'is_image' => 'File harus berupa gambar (JPG, PNG, dll).'
+            ]
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-    
+
         $data = [
             'motif' => $this->request->getPost('motif'),
             'deskripsi' => $this->request->getPost('deskripsi'),
@@ -119,7 +156,7 @@ class ProdukController extends BaseController
             'tanggal_produksi' => $this->request->getPost('tanggal_produksi'),
             'nama_pembuat' => $this->request->getPost('nama_pembuat')
         ];
-    
+
         // Handle upload foto baru
         $foto = $this->request->getFile('foto_produk');
         if ($foto && $foto->isValid() && !$foto->hasMoved()) {
@@ -135,7 +172,7 @@ class ProdukController extends BaseController
             $foto->move(ROOTPATH . 'public/' . $fotoPath, $fotoName);
             $data['foto_produk_path'] = $fotoPath . $fotoName;
         }
-    
+
         $this->models->update($id, $data);
         return redirect()->to('admin/produk')->with('success', 'Produk berhasil diperbarui');
     }
@@ -143,7 +180,7 @@ class ProdukController extends BaseController
     public function hapus($id)
     {
         $produk = $this->models->find($id);
-        
+
         if ($produk && $produk['qr_code_path']) {
             $qrPath = WRITEPATH . str_replace('uploads/', 'uploads/', $produk['qr_code_path']);
             if (file_exists($qrPath)) {
@@ -158,18 +195,18 @@ class ProdukController extends BaseController
     private function generateQRCode($kode)
     {
         require_once APPPATH . 'Libraries/QRtools.php';
-    
+
         $qrDir = FCPATH . 'uploads/qrcodes/'; // FCPATH = path ke folder public/
-    
+
         if (!is_dir($qrDir)) {
             mkdir($qrDir, 0777, true);
         }
-    
+
         $filename = 'qrcode_' . md5($kode) . '.png';
         $filepath = $qrDir . $filename;
-    
+
         \QRcode::png($kode, $filepath, QR_ECLEVEL_L, 4);
-    
+
         return 'uploads/qrcodes/' . $filename; // path relatif dari public/
     }
 }
